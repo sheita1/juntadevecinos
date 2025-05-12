@@ -12,6 +12,18 @@ export function formatUserData(user) {
     };
 }
 
+export function formatVecinoData(vecino) {
+    return {
+        ...vecino,
+        nombre: startCase(vecino.nombre),
+        rut: formatRut(vecino.rut),
+        correo: vecino.correo,
+        telefono: vecino.telefono,
+        comprobanteDomicilio: vecino.comprobanteDomicilio,
+        createdAt: formatTempo(vecino.createdAt, "DD-MM-YYYY")
+    };
+}
+
 export function convertirMinusculas(obj) {
     for (let key in obj) {
         if (typeof obj[key] === 'string') {
@@ -30,3 +42,5 @@ export function formatPostUpdate(user) {
         createdAt: formatTempo(user.createdAt, "DD-MM-YYYY")
     };
 }
+
+

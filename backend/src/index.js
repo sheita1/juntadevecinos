@@ -59,13 +59,20 @@ async function setupServer() {
 
     passportJwtSetup();
 
+    // ✅ Ruta de prueba para verificar conexión
+    app.get("/api/test", (req, res) => {
+      res.json({ mensaje: "✅ API funcionando correctamente" });
+    });
+
+    // ✅ Confirma que `indexRoutes` está activo
+    console.log("🔄 Cargando rutas desde indexRoutes...");
     app.use("/api", indexRoutes);
 
     app.listen(PORT, () => {
-      console.log(`=> Servidor corriendo en ${HOST}:${PORT}/api`);
+      console.log(`✅ Servidor corriendo en ${HOST}:${PORT}/api`);
     });
   } catch (error) {
-    console.log("Error en index.js -> setupServer(), el error es: ", error);
+    console.log("❌ Error en setupServer():", error);
   }
 }
 
@@ -75,12 +82,10 @@ async function setupAPI() {
     await setupServer();
     await createUsers();
   } catch (error) {
-    console.log("Error en index.js -> setupAPI(), el error es: ", error);
+    console.log("❌ Error en setupAPI():", error);
   }
 }
 
 setupAPI()
-  .then(() => console.log("=> API Iniciada exitosamente"))
-  .catch((error) =>
-    console.log("Error en index.js -> setupAPI(), el error es: ", error),
-  );
+  .then(() => console.log("🚀 API Iniciada exitosamente"))
+  .catch((error) => console.log("❌ Error en setupAPI():", error));
