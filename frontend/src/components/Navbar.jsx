@@ -1,21 +1,21 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { logout } from '@services/auth.service.js';
-import '@styles/navbar.css';
+import { logout } from "@services/auth.service.js";
+import "@styles/navbar.css";
 import { useState } from "react";
 
 const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const user = JSON.parse(sessionStorage.getItem('usuario')) || '';
+    const user = JSON.parse(sessionStorage.getItem("usuario")) || "";
     const userRole = user?.rol;
     const [menuOpen, setMenuOpen] = useState(false);
 
     const logoutSubmit = () => {
         try {
             logout();
-            navigate('/auth'); 
+            navigate("/auth"); 
         } catch (error) {
-            console.error('Error al cerrar sesión:', error);
+            console.error("Error al cerrar sesión:", error);
         }
     };
 
@@ -29,22 +29,22 @@ const Navbar = () => {
     };
 
     const removeActiveClass = () => {
-        const activeLinks = document.querySelectorAll('.nav-menu ul li a.active');
-        activeLinks.forEach(link => link.classList.remove('active'));
+        const activeLinks = document.querySelectorAll(".nav-menu ul li a.active");
+        activeLinks.forEach(link => link.classList.remove("active"));
     };
 
     const addActiveClass = () => {
-        const links = document.querySelectorAll('.nav-menu ul li a');
+        const links = document.querySelectorAll(".nav-menu ul li a");
         links.forEach(link => {
-            if (link.getAttribute('href') === location.pathname) {
-                link.classList.add('active');
+            if (link.getAttribute("href") === location.pathname) {
+                link.classList.add("active");
             }
         });
     };
 
     return (
         <nav className="navbar">
-            <div className={`nav-menu ${menuOpen ? 'activado' : ''}`}>
+            <div className={`nav-menu ${menuOpen ? "activado" : ""}`}>
                 <ul>
                     <li>
                         <NavLink 
@@ -58,7 +58,7 @@ const Navbar = () => {
                             Inicio
                         </NavLink>
                     </li>
-                    {userRole === 'administrador' && (
+                    {userRole === "administrador" && (
                     <>
                         <li>
                             <NavLink 
@@ -74,7 +74,7 @@ const Navbar = () => {
                         </li>
                         <li>
                             <NavLink 
-                                to="/vecinos"  // ✅ Nueva sección de Vecinos
+                                to="/vecinos"  
                                 onClick={() => { 
                                     setMenuOpen(false); 
                                     addActiveClass();
@@ -82,6 +82,18 @@ const Navbar = () => {
                                 activeClassName="active"
                             >
                                 Vecinos
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink 
+                                to="/reuniones"  // ✅ Nueva sección de Reuniones
+                                onClick={() => { 
+                                    setMenuOpen(false); 
+                                    addActiveClass();
+                                }} 
+                                activeClassName="active"
+                            >
+                                Reuniones
                             </NavLink>
                         </li>
                     </>

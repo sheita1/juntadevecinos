@@ -15,7 +15,7 @@ import useDeleteVecino from '@hooks/vecinos/useDeleteVecino';
 const Vecinos = () => {
   const { vecinos, fetchVecinos, setVecinos } = useVecinos();
   const [filterRut, setFilterRut] = useState('');
-  const [showForm, setShowForm] = useState(false);  // ✅ Estado para mostrar el formulario de registro
+  const [showForm, setShowForm] = useState(false);  
 
   const {
     handleClickUpdate,
@@ -65,7 +65,7 @@ const Vecinos = () => {
                 <img src={DeleteIcon} alt="delete" />
               )}
             </button>
-            <button className='add-vecino-button' onClick={() => setShowForm(true)}>Registrar Vecino</button>  {/* ✅ Botón para abrir el formulario */}
+            <button className='add-vecino-button' onClick={() => setShowForm(true)}>Registrar Vecino</button>  {}
           </div>
         </div>
         <Table

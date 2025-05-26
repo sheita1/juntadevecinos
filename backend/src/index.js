@@ -11,6 +11,7 @@ import { connectDB } from "./config/configDb.js";
 import { createUsers } from "./config/initialSetup.js";
 import { passportJwtSetup } from "./auth/passport.auth.js";
 
+
 async function setupServer() {
   try {
     const app = express();
@@ -59,12 +60,12 @@ async function setupServer() {
 
     passportJwtSetup();
 
-    // ✅ Ruta de prueba para verificar conexión
+  
     app.get("/api/test", (req, res) => {
       res.json({ mensaje: "✅ API funcionando correctamente" });
     });
 
-    // ✅ Confirma que `indexRoutes` está activo
+    
     console.log("🔄 Cargando rutas desde indexRoutes...");
     app.use("/api", indexRoutes);
 

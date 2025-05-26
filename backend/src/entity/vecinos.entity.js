@@ -34,7 +34,7 @@ const VecinoSchema = new EntitySchema({
     },
     comprobanteDomicilio: {
       type: "varchar",
-      length: 255,  // Guarda la ruta del archivo .png
+      length: 255,  
       nullable: true,
     },
     createdAt: {
