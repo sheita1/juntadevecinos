@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react';
 import "../styles/vecinos.css";
 import useEditVecino from '@hooks/vecinos/useEditVecino';
 import useDeleteVecino from '@hooks/vecinos/useDeleteVecino';
-
+import { buildFileUrl } from '@helpers/urlHelper';
 
 const Vecinos = () => {
   const { vecinos, fetchVecinos, setVecinos } = useVecinos();
@@ -38,30 +38,24 @@ const Vecinos = () => {
     { title: "Correo electrónico", field: "correo", width: 300, responsive: 3 },
     { title: "Rut", field: "rut", width: 150, responsive: 2 },
     { title: "Teléfono", field: "telefono", width: 200, responsive: 2 },
-    
-{
-  title: "Comprobante",
-  field: "comprobanteDomicilio",
-  width: 220,
-  responsive: 2,
-  formatter: (cell) => {
-    const url = cell.getValue();
+    {
+      title: "Comprobante",
+      field: "comprobanteDomicilio",
+      width: 220,
+      responsive: 2,
+      formatter: (cell) => {
+        const url = cell.getValue();
 
-    if (!url) return "No disponible";
+        if (!url) return "No disponible";
 
-   
-    if (url.startsWith("http") || url.startsWith("https")) {
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer">📄 Ver Comprobante</a>`;
+        if (url.startsWith("http") || url.startsWith("https")) {
+          return `<a href="${url}" target="_blank" rel="noopener noreferrer">📄 Ver Comprobante</a>`;
+        }
+
+        const link = buildFileUrl(url);
+        return `<a href="${link}" target="_blank" rel="noopener noreferrer">📄 Ver Comprobante</a>`;
+      }
     }
-
-    
-    const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
-    return `<a href="${baseUrl}/${url}" target="_blank" rel="noopener noreferrer">📄 Ver Comprobante</a>`;
-  }
-}
-
-
-    
   ];
 
   return (
