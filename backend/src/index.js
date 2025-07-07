@@ -41,19 +41,26 @@ async function setupServer() {
     app.use(passport.session());
     passportJwtSetup();
 
-    
     app.use(json({ limit: "1mb" }));
     app.use(urlencoded({ extended: true, limit: "1mb" }));
 
-    
+    // 🗂️ Archivos estáticos subidos
     app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-    
+    // 🧩 Servir React desde frontend/dist
+    const frontendPath = path.join(process.cwd(), "frontend/dist");
+    app.use(express.static(frontendPath));
+
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(frontendPath, "index.html"));
+    });
+
+    // 🔧 Endpoint de prueba
     app.get("/api/test", (req, res) => {
       res.json({ mensaje: "✅ API funcionando correctamente" });
     });
 
-    
+    // 📦 Rutas del backend
     console.log("🔄 Cargando rutas desde indexRoutes...");
     app.use("/api", indexRoutes);
 
