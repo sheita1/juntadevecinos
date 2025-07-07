@@ -1,44 +1,179 @@
 .reuniones-container {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-    text-align: center;
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
 }
 
 .form-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .form-container input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .reuniones-table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.reuniones-table th, .reuniones-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
+.reuniones-table th,
+.reuniones-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
 }
 
-.delete-btn {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
+
+.button {
+  font-family: "Segoe UI", Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.upload-btn {
-    background-color: blue;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
+
+.edit-reunion-button {
+  background-color: #ffc107 !important;
+  color: #212121 !important;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.delete-reunion-button {
+  background-color: #f44336 !important;
+  color: white !important;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.add-reunion-button {
+  background-color: #4caf50 !important;
+  color: white !important;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.edit-reunion-button:disabled,
+.delete-reunion-button:disabled,
+.add-reunion-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+.edit-reunion-button:hover,
+.delete-reunion-button:hover,
+.add-reunion-button:hover,
+.edit-reunion-button:focus,
+.delete-reunion-button:focus,
+.add-reunion-button:focus,
+.edit-reunion-button:active,
+.delete-reunion-button:active,
+.add-reunion-button:active {
+  background-color: inherit !important;
+  color: inherit !important;
+}
+
+.acta-card {
+  background-color: #fdfdfd;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 6px 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  font-family: "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  margin: 4px 0;
+  min-width: 180px;
+}
+
+
+.acta-flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+
+.acta-badge {
+  background-color: #e0f2f1;
+  color: #00796b;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  display: inline-block;
+}
+
+
+.acta-btn,
+.boton-acta-eliminar {
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: inline-block;
+}
+
+
+.acta-btn {
+  background-color: #003366;
+  color: white;
+}
+
+.acta-btn:hover {
+  background-color: #005599;
+}
+
+.acta-btn.eliminar,
+.boton-acta-eliminar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.acta-btn.eliminar:hover,
+.boton-acta-eliminar:hover {
+  background-color: #d32f2f !important;
+}
+
+
+.tabulator-cell[colname="accionActa"] {
+  vertical-align: middle;
 }

@@ -10,23 +10,35 @@ export async function loginService(user) {
     const userRepository = AppDataSource.getRepository(User);
     const { email, password } = user;
 
+    // 🧪 LOG de entrada
+    console.log("🧾 loginService recibió:", { email, password });
+
     const createErrorMessage = (dataInfo, message) => ({
       dataInfo,
-      message
+      message,
     });
 
     const userFound = await userRepository.findOne({
-      where: { email }
+      where: { email },
     });
 
+    // 🧪 LOG resultado búsqueda
+    console.log("🔍 Usuario encontrado:", userFound);
+
     if (!userFound) {
-      return [null, createErrorMessage("email", "El correo electrónico es incorrecto")];
+      return [
+        null,
+        createErrorMessage("email", "El correo electrónico es incorrecto"),
+      ];
     }
 
     const isMatch = await comparePassword(password, userFound.password);
 
     if (!isMatch) {
-      return [null, createErrorMessage("password", "La contraseña es incorrecta")];
+      return [
+        null,
+        createErrorMessage("password", "La contraseña es incorrecta"),
+      ];
     }
 
     const payload = {
@@ -42,11 +54,10 @@ export async function loginService(user) {
 
     return [accessToken, null];
   } catch (error) {
-    console.error("Error al iniciar sesión:", error);
+    console.error("❌ Error en loginService:", error);
     return [null, "Error interno del servidor"];
   }
 }
-
 
 export async function registerService(user) {
   try {
@@ -56,24 +67,25 @@ export async function registerService(user) {
 
     const createErrorMessage = (dataInfo, message) => ({
       dataInfo,
-      message
+      message,
     });
 
     const existingEmailUser = await userRepository.findOne({
-      where: {
-        email,
-      },
+      where: { email },
     });
-    
-    if (existingEmailUser) return [null, createErrorMessage("email", "Correo electrónico en uso")];
+
+    if (existingEmailUser)
+      return [
+        null,
+        createErrorMessage("email", "Correo electrónico en uso"),
+      ];
 
     const existingRutUser = await userRepository.findOne({
-      where: {
-        rut,
-      },
+      where: { rut },
     });
 
-    if (existingRutUser) return [null, createErrorMessage("rut", "Rut ya asociado a una cuenta")];
+    if (existingRutUser)
+      return [null, createErrorMessage("rut", "Rut ya asociado a una cuenta")];
 
     const newUser = userRepository.create({
       nombreCompleto,
@@ -89,7 +101,7 @@ export async function registerService(user) {
 
     return [dataUser, null];
   } catch (error) {
-    console.error("Error al registrar un usuario", error);
+    console.error("❌ Error al registrar un usuario:", error);
     return [null, "Error interno del servidor"];
   }
 }

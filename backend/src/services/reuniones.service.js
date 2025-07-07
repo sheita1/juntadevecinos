@@ -2,77 +2,127 @@
 import { AppDataSource } from "../config/configDb.js";
 import Reunion from "../entity/reunion.entity.js";
 
-export async function createReunionService({ nombre, fecha }) {
-    try {
-        const reunionRepository = AppDataSource.getRepository(Reunion);
-        const nuevaReunion = reunionRepository.create({ nombre, fecha });
-        await reunionRepository.save(nuevaReunion);
-        return [nuevaReunion, null];
-    } catch (error) {
-        return [null, error.message];
+export async function validarReunionPorFecha(fecha) {
+  try {
+    const repo = AppDataSource.getRepository(Reunion);
+    const existente = await repo.findOne({ where: { fecha } });
+    return !!existente;
+  } catch (error) {
+    console.error("❌ [Validar] Error al buscar reunión existente:", error);
+    return false;
+  }
+}
+
+/**
+ * Crea nueva reunión si no repite fecha
+ */
+export async function createReunionService({ nombre, fecha, acta }) {
+  try {
+    const repo = AppDataSource.getRepository(Reunion);
+
+    console.log("🔍 [Crear] Verificando si ya existe una reunión el:", fecha);
+    const existe = await validarReunionPorFecha(fecha);
+
+    if (existe) {
+      console.warn("⚠️ [Crear] Ya existe una reunión en ese horario:", fecha);
+      return [null, "Ya hay una reunión registrada en esa fecha y hora"];
     }
+
+    const nuevaReunion = repo.create({
+      nombre,
+      fecha,
+      acta: acta || null,
+    });
+
+    await repo.save(nuevaReunion);
+    console.log("✅ [Crear] Reunión guardada:", nuevaReunion);
+    return [nuevaReunion, null];
+  } catch (error) {
+    console.error("❌ [Crear] Error al guardar reunión:", error);
+    return [null, "Error interno del servidor"];
+  }
 }
 
 export async function getReunionesService() {
-    try {
-        const reunionRepository = AppDataSource.getRepository(Reunion);
-        const reuniones = await reunionRepository.find();
-        return [reuniones, null];
-    } catch (error) {
-        return [null, error.message];
-    }
+  try {
+    const repo = AppDataSource.getRepository(Reunion);
+    const reuniones = await repo.find();
+    console.log("📋 [Listar] Reuniones encontradas:", reuniones.length);
+    return [reuniones, null];
+  } catch (error) {
+    console.error("❌ [Listar] Error:", error);
+    return [null, error.message];
+  }
 }
 
 export async function uploadActaService(id, actaPath) {
-    try {
-        const reunionRepository = AppDataSource.getRepository(Reunion);
-        const reunion = await reunionRepository.findOneBy({ id });
+  try {
+    const repo = AppDataSource.getRepository(Reunion);
+    const reunion = await repo.findOneBy({ id });
 
-        if (!reunion) return [null, "Reunión no encontrada"];
+    if (!reunion) return [null, "Reunión no encontrada"];
 
-        console.log(`📂 Guardando acta en la reunión ID: ${id} - Ruta: ${actaPath}`);  
+    console.log(`📂 [Acta] Asociando acta a ID: ${id} - Ruta: ${actaPath}`);
+    reunion.acta = actaPath;
+    await repo.save(reunion);
 
-        reunion.acta = actaPath;
-        await reunionRepository.save(reunion);
+    return [reunion, null];
+  } catch (error) {
+    console.error("❌ [Acta] Error al guardar:", error);
+    return [null, error.message];
+  }
+}
 
-        return [reunion, null];
-    } catch (error) {
-        console.error("❌ Error al guardar el acta:", error);
-        return [null, error.message];
-    }
+export async function eliminarActaService(id) {
+  try {
+    const repo = AppDataSource.getRepository(Reunion);
+    const reunion = await repo.findOneBy({ id });
+
+    if (!reunion) return [null, "Reunión no encontrada"];
+
+    reunion.acta = null;
+    await repo.save(reunion);
+
+    console.log("🗑️ [Acta] Acta eliminada para reunión ID:", id);
+    return ["Acta eliminada correctamente", null];
+  } catch (error) {
+    console.error("❌ [Acta:delete] Error:", error);
+    return [null, "Error al eliminar acta"];
+  }
 }
 
 export async function deleteReunionService(id) {
-    try {
-        const reunionRepository = AppDataSource.getRepository(Reunion);
-        const reunion = await reunionRepository.findOneBy({ id });
+  try {
+    const repo = AppDataSource.getRepository(Reunion);
+    const reunion = await repo.findOneBy({ id });
 
-        if (!reunion) return [null, "Reunión no encontrada"];
+    if (!reunion) return [null, "Reunión no encontrada"];
 
-        await reunionRepository.remove(reunion);
-
-        return ["Reunión eliminada correctamente", null];
-    } catch (error) {
-        return [null, error.message];
-    }
+    await repo.remove(reunion);
+    console.log("🗑️ [Eliminar] Reunión eliminada:", reunion);
+    return ["Reunión eliminada correctamente", null];
+  } catch (error) {
+    console.error("❌ [Eliminar] Error:", error);
+    return [null, error.message];
+  }
 }
 
 export async function updateReunionService(id, updatedData) {
-    try {
-        const reunionRepository = AppDataSource.getRepository(Reunion);
-        const reunion = await reunionRepository.findOneBy({ id });
+  try {
+    const repo = AppDataSource.getRepository(Reunion);
+    const reunion = await repo.findOneBy({ id });
 
-        if (!reunion) return [null, "Reunión no encontrada"];
+    if (!reunion) return [null, "Reunión no encontrada"];
 
-        console.log(`🔄 Actualizando reunión con ID: ${id}`, updatedData);  
+    console.log(`🔄 [Actualizar] Reunión ${id}:`, updatedData);
 
-        reunion.nombre = updatedData.nombre || reunion.nombre;
-        reunion.fecha = updatedData.fecha || reunion.fecha;
-        await reunionRepository.save(reunion);
+    reunion.nombre = updatedData.nombre || reunion.nombre;
+    reunion.fecha = updatedData.fecha || reunion.fecha;
 
-        return [reunion, null];
-    } catch (error) {
-        console.error("❌ Error al actualizar reunión:", error);
-        return [null, error.message];
-    }
+    await repo.save(reunion);
+    return [reunion, null];
+  } catch (error) {
+    console.error("❌ [Actualizar] Error:", error);
+    return [null, error.message];
+  }
 }
