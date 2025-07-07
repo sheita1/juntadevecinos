@@ -1,147 +1,201 @@
-import Form from '@components/Form';
 import '@styles/popup.css';
 import CloseIcon from '@assets/XIcon.svg';
-import { useState } from 'react';
-import { createVecino } from '@services/vecinos.service.js';
+import Form from '@components/Form';
+import { useState, useRef } from 'react';
+import { createVecino, updateVecino } from '@services/vecinos.service.js';
 import { showSuccessAlert, showErrorAlert } from '@helpers/sweetAlert.js';
+import useVecinos from '@hooks/vecinos/useGetVecinos';
 
-export default function FormRegistroVecino({ show, setShow, setVecinos }) {
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [file, setFile] = useState(null);  
+export default function FormRegistroVecino({
+  show,
+  setShow,
+  setVecinos,
+  dataInicial = null,
+  modoEdicion = false,
+}) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef(null);
+  const formRef = useRef(null);
 
-    const handleFileChange = (event) => {
-        setFile(event.target.files[0]);  
-        console.log("📂 Archivo seleccionado:", event.target.files[0]);  
-    };
+  const { vecinos } = useVecinos();
 
-    const handleSubmit = async (formData) => {
-        setIsSubmitting(true);
+  const validarDuplicado = (campo, valor) => {
+    return vecinos.some((v) => {
+      const mismoVecino = modoEdicion && dataInicial?.id === v.id;
+      if (mismoVecino) return false;
+      return v[campo]?.trim() === valor.trim();
+    });
+  };
 
-        try {
-            console.log("🚀 Enviando datos...");
-            console.log("📝 Datos del formulario antes de FormData:", formData);
+  const handleCampoBlur = (campo, label) => (e) => {
+    const valorIngresado = e.target.value;
+    if (!valorIngresado) return;
 
-            const formDataToSend = new FormData();
+    const duplicado = validarDuplicado(campo, valorIngresado);
 
-            
-            for (const key in formData) {
-                if (key !== "comprobanteDomicilio") {  
-                    formDataToSend.append(key, formData[key]);
-                    console.log(`✅ Campo agregado: ${key} -> ${formData[key]}`);
-                }
-            }
+    if (duplicado) {
+      showErrorAlert(`${label} duplicado`, `Ya existe un vecino con ese ${label.toLowerCase()}.`);
+    }
+  };
 
-            
-            if (file) {
-                formDataToSend.append("comprobanteDomicilio", file);
-                console.log("✅ Archivo agregado a FormData:", file.name);
-            } else {
-                console.error("❌ No se adjuntó ningún archivo.");
-            }
+  const handleSubmit = async (formData) => {
+    setIsSubmitting(true);
 
-            
-            console.log("🔍 Datos enviados al backend:");
-            for (let pair of formDataToSend.entries()) {
-                console.log(`📝 ${pair[0]}:`, pair[1]);
-            }
+    try {
+      const formDataToSend = new FormData();
 
-            const newVecino = await createVecino(formDataToSend);
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value) formDataToSend.append(key, value);
+      });
 
-            if (newVecino) {
-                showSuccessAlert('¡Registro exitoso!', 'El vecino ha sido agregado correctamente.');
-                setVecinos(prevVecinos => [...prevVecinos, newVecino]);  
-                setShow(false);  
-            } else {
-                showErrorAlert('Error', 'No se pudo registrar el vecino.');
-            }
-        } catch (error) {
-            console.error('❌ Error al registrar vecino:', error);
-            showErrorAlert('Error', 'No se pudo registrar el vecino.');
-        } finally {
-            setIsSubmitting(false);
+      if (!modoEdicion) {
+        const file = fileInputRef.current?.files[0];
+        if (file instanceof File) {
+          formDataToSend.append('comprobante', file);
+          console.log('📂 Archivo PDF adjuntado:', file.name);
+        } else {
+          console.warn('⚠️ No se seleccionó un archivo PDF.');
         }
-    };
+      }
 
-    const patternRut = new RegExp(/^(?:(?:[1-9]\d{0}|[1-2]\d{1})(\.\d{3}){2}|[1-9]\d{6}|[1-2]\d{7}|29\.999\.999|29999999)-[\dkK]$/);
+      console.log('📤 Datos enviados al backend:', [...formDataToSend.entries()]);
 
-    return (
-        <div>
-            { show && (
-            <div className="bg">
-                <div className="popup">
-                    <button className='close' onClick={() => setShow(false)}>
-                        <img src={CloseIcon} />
-                    </button>
-                    <Form
-                        title="Registrar Vecino"
-                        fields={[
-                            {
-                                label: "Nombre completo",
-                                name: "nombre",
-                                placeholder: 'Diego Alexis Salazar Jara',
-                                fieldType: 'input',
-                                type: "text",
-                                required: true,
-                                minLength: 15,
-                                maxLength: 50,
-                                pattern: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-                                patternMessage: "Debe contener solo letras y espacios",
-                            },
-                            {
-                                label: "Correo electrónico",
-                                name: "correo",
-                                placeholder: 'example@gmail.cl',
-                                fieldType: 'input',
-                                type: "email",
-                                required: true,
-                                minLength: 15,
-                                maxLength: 30,
-                            },
-                            {
-                                label: "Rut",
-                                name: "rut",
-                                placeholder: '21.308.770-3',
-                                fieldType: 'input',
-                                type: "text",
-                                minLength: 9,
-                                maxLength: 12,
-                                pattern: patternRut,
-                                patternMessage: "Debe ser xx.xxx.xxx-x o xxxxxxxx-x",
-                                required: true,
-                            },
-                            {
-                                label: "Teléfono",
-                                name: "telefono",
-                                placeholder: '+56912345678',
-                                fieldType: 'input',
-                                type: "text",
-                                required: true,
-                                minLength: 9,
-                                maxLength: 12,
-                                pattern: /^[0-9]+$/,
-                                patternMessage: "Debe contener solo números",
-                            }
-                        ]}
-                        onSubmit={handleSubmit}
-                        buttonText={isSubmitting ? "Registrando..." : "Registrar Vecino"}
-                        backgroundColor={'#fff'}
-                    />
+      if (modoEdicion && dataInicial?.rut) {
+        const vecinoActualizado = await updateVecino(formDataToSend, dataInicial.rut);
 
-                    {}
-                    <div className="file-upload">
-                        <label htmlFor="comprobanteDomicilio">Comprobante de domicilio (PNG)</label>
-                        <input 
-                            type="file" 
-                            id="comprobanteDomicilio" 
-                            name="comprobanteDomicilio" 
-                            accept=".png" 
-                            onChange={handleFileChange} 
-                            required 
-                        />
-                    </div>
-                </div>
-            </div>
+        showSuccessAlert('¡Actualizado!', 'El vecino ha sido modificado exitosamente.');
+        setVecinos((prev) =>
+          prev.map((vec) =>
+            vec.id === vecinoActualizado.id ? vecinoActualizado : vec
+          )
+        );
+      } else {
+        const nuevoVecino = await createVecino(formDataToSend);
+
+        showSuccessAlert('¡Registro exitoso!', 'El vecino ha sido agregado correctamente.');
+        setVecinos((prev) => [...prev, nuevoVecino]);
+      }
+
+      setShow(false);
+    } catch (error) {
+      console.error('❌ Error al enviar vecino:', error);
+
+      const status = error?.response?.status;
+      const mensaje = error?.response?.data || "Ocurrió un problema inesperado.";
+
+      if (status === 409 && typeof mensaje === "string") {
+        showErrorAlert("Registro duplicado", mensaje);
+      } else {
+        showErrorAlert("Error", mensaje);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const patternRut = new RegExp(
+    /^(?:(?:[1-9]\d{0}|[1-2]\d{1})(\.\d{3}){2}|[1-9]\d{6}|[1-2]\d{7}|29\.999\.999|29999999)-[\dkK]$/
+  );
+
+  const campos = [
+    {
+      label: 'Nombre completo',
+      name: 'nombre',
+      placeholder: 'Nombre Apellido',
+      fieldType: 'input',
+      type: 'text',
+      required: true,
+      minLength: 15,
+      maxLength: 50,
+      pattern: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      patternMessage: 'Debe contener solo letras y espacios',
+      onBlur: handleCampoBlur('nombre', 'Nombre')
+    },
+    {
+      label: 'Correo electrónico',
+      name: 'correo',
+      placeholder: 'example@gmail.cl',
+      fieldType: 'input',
+      type: 'email',
+      required: true,
+      minLength: 15,
+      maxLength: 30,
+      onBlur: handleCampoBlur('correo', 'Correo')
+    },
+    {
+      label: 'Rut',
+      name: 'rut',
+      placeholder: '21.308.770-3',
+      fieldType: 'input',
+      type: 'text',
+      required: true,
+      minLength: 9,
+      maxLength: 12,
+      pattern: patternRut,
+      patternMessage: 'Debe ser xx.xxx.xxx-x o xxxxxxxx-x',
+      onBlur: handleCampoBlur('rut', 'Rut')
+    },
+    {
+      label: 'Teléfono',
+      name: 'telefono',
+      placeholder: '912345678',
+      fieldType: 'input',
+      type: 'text',
+      required: true,
+      minLength: 9,
+      maxLength: 9,
+      pattern: /^[0-9]{9}$/,
+      patternMessage: 'Debe contener exactamente 9 dígitos numéricos',
+      onBlur: handleCampoBlur('telefono', 'Teléfono')
+    },
+  ];
+
+  return (
+    <>
+      {show && (
+        <div className="bg">
+          <div className="popup">
+            <button className="close" onClick={() => setShow(false)}>
+              <img src={CloseIcon} alt="Cerrar" />
+            </button>
+
+            <Form
+              ref={formRef}
+              title={modoEdicion ? 'Editar Vecino' : 'Registrar Vecino'}
+              fields={campos}
+              defaultValues={dataInicial}
+              onSubmit={handleSubmit}
+              buttonText={
+                isSubmitting
+                  ? modoEdicion
+                    ? 'Actualizando...'
+                    : 'Registrando...'
+                  : modoEdicion
+                  ? 'Actualizar Vecino'
+                  : 'Registrar Vecino'
+              }
+              backgroundColor="#fff"
+            />
+
+            {!modoEdicion && (
+              <div className="file-upload">
+                <label htmlFor="comprobante" className="btn-archivo">
+                  Adjuntar Comprobante
+                </label>
+                <input
+                  type="file"
+                  id="comprobante"
+                  name="comprobante"
+                  accept="application/pdf"
+                  ref={fileInputRef}
+                  required
+                  style={{ display: 'none' }}
+                />
+              </div>
             )}
+          </div>
         </div>
-    );
+      )}
+    </>
+  );
 }

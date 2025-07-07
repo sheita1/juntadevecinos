@@ -1,90 +1,53 @@
-.main-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
+
+.vecino-button {
+  font-family: "Segoe UI", Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.table-container {
-    width: 90%;
-    max-width: 1400px;
-    margin: 0 auto;
+
+.add-vecino-button {
+  background-color: #4caf50 !important;
+  color: white !important;
 }
 
-.top-table {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+
+.edit-vecino-button {
+  background-color: #ffc107 !important;
+  color: #212121 !important;
 }
 
-.title-table {
-    color: #003366;
-    margin-left: 70px;
-}
-
-.filter-actions {
-    display: flex;
-    gap: 10px;
-    button {
-        background: rgba(255, 255, 255, 0.87);
-        border: #fff;
-        cursor: pointer;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    }
-}
 
 .delete-vecino-button {
-    margin-right: 70px;
+  background-color: #f44336 !important;
+  color: white !important;
 }
 
-@media (max-width: 767px) {
-    .title-table {
-        margin: 0;
-    }
-    .top-table {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
 
-    .delete-vecino-button {
-        margin-right: 0;
-    }
-
-    .filter-actions {
-        margin-bottom: 10px;
-    }
-    .table-container {
-        margin: 0;
-        width: 352px;
-        height: 500px;
-    }
-    .popup {
-        width: 350px;
-        height: 600px;
-    }
-    .popup .form {
-        padding: 20px;
-    }
-
-    .popup .close {
-        margin-right: 0;
-    }
-
-    .popup .options-class {
-        width: 10px;
-    }
+.add-vecino-button:disabled,
+.edit-vecino-button:disabled,
+.delete-vecino-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
-@media (min-width: 768px) and (max-width: 1024px) {
-    .title-table {
-        margin-left: 35px;
-    }
 
-    .delete-vecino-button {
-        margin-right: 35px;
-    }
+.add-vecino-button:hover,
+.edit-vecino-button:hover,
+.delete-vecino-button:hover,
+.add-vecino-button:focus,
+.edit-vecino-button:focus,
+.delete-vecino-button:focus,
+.add-vecino-button:active,
+.edit-vecino-button:active,
+.delete-vecino-button:active {
+  background-color: inherit !important;
+  color: inherit !important;
 }

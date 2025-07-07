@@ -2,15 +2,12 @@ import Table from '@components/Table';
 import useVecinos from '@hooks/vecinos/useGetVecinos.jsx';
 import Search from '../components/Search';
 import Popup from '../components/PopupVecinos';
-import FormRegistroVecino from '../components/FormRegistroVecino';  // ✅ Nuevo formulario de registro
-import DeleteIcon from '../assets/deleteIcon.svg';
-import UpdateIcon from '../assets/updateIcon.svg';
-import UpdateIconDisable from '../assets/updateIconDisabled.svg';
-import DeleteIconDisable from '../assets/deleteIconDisabled.svg';
+import FormRegistroVecino from '../components/FormRegistroVecino';
 import { useCallback, useState } from 'react';
-import '@styles/vecinos.css';
+import "../styles/vecinos.css";
 import useEditVecino from '@hooks/vecinos/useEditVecino';
 import useDeleteVecino from '@hooks/vecinos/useDeleteVecino';
+
 
 const Vecinos = () => {
   const { vecinos, fetchVecinos, setVecinos } = useVecinos();
@@ -41,7 +38,30 @@ const Vecinos = () => {
     { title: "Correo electrónico", field: "correo", width: 300, responsive: 3 },
     { title: "Rut", field: "rut", width: 150, responsive: 2 },
     { title: "Teléfono", field: "telefono", width: 200, responsive: 2 },
-    { title: "Creado", field: "createdAt", width: 200, responsive: 2 }
+    
+{
+  title: "Comprobante",
+  field: "comprobanteDomicilio",
+  width: 220,
+  responsive: 2,
+  formatter: (cell) => {
+    const url = cell.getValue();
+
+    if (!url) return "No disponible";
+
+   
+    if (url.startsWith("http") || url.startsWith("https")) {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">📄 Ver Comprobante</a>`;
+    }
+
+    
+    const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+    return `<a href="${baseUrl}/${url}" target="_blank" rel="noopener noreferrer">📄 Ver Comprobante</a>`;
+  }
+}
+
+
+    
   ];
 
   return (
@@ -50,22 +70,34 @@ const Vecinos = () => {
         <div className='top-table'>
           <h1 className='title-table'>Vecinos</h1>
           <div className='filter-actions'>
-            <Search value={filterRut} onChange={handleRutFilterChange} placeholder={'Filtrar por rut'} />
-            <button onClick={handleClickUpdate} disabled={dataVecino.length === 0}>
-              {dataVecino.length === 0 ? (
-                <img src={UpdateIconDisable} alt="edit-disabled" />
-              ) : (
-                <img src={UpdateIcon} alt="edit" />
-              )}
+            <Search
+              value={filterRut}
+              onChange={handleRutFilterChange}
+              placeholder={'Filtrar por rut'}
+            />
+
+            <button
+              className='edit-vecino-button vecino-button'
+              onClick={handleClickUpdate}
+              disabled={dataVecino.length === 0}
+            >
+              Editar
             </button>
-            <button className='delete-vecino-button' disabled={dataVecino.length === 0} onClick={() => handleDelete(dataVecino)}>
-              {dataVecino.length === 0 ? (
-                <img src={DeleteIconDisable} alt="delete-disabled" />
-              ) : (
-                <img src={DeleteIcon} alt="delete" />
-              )}
+
+            <button
+              className='delete-vecino-button vecino-button'
+              onClick={() => handleDelete(dataVecino)}
+              disabled={dataVecino.length === 0}
+            >
+              Eliminar
             </button>
-            <button className='add-vecino-button' onClick={() => setShowForm(true)}>Registrar Vecino</button>  {}
+
+            <button
+              className='add-vecino-button vecino-button'
+              onClick={() => setShowForm(true)}
+            >
+              Registrar Vecino
+            </button>
           </div>
         </div>
         <Table
@@ -77,8 +109,17 @@ const Vecinos = () => {
           onSelectionChange={handleSelectionChange}
         />
       </div>
-      <Popup show={isPopupOpen} setShow={setIsPopupOpen} data={dataVecino} action={handleUpdate} />
-      <FormRegistroVecino show={showForm} setShow={setShowForm} setVecinos={setVecinos} />  {/* ✅ Formulario de registro */}
+      <Popup
+        show={isPopupOpen}
+        setShow={setIsPopupOpen}
+        data={dataVecino}
+        action={handleUpdate}
+      />
+      <FormRegistroVecino
+        show={showForm}
+        setShow={setShowForm}
+        setVecinos={setVecinos}
+      />
     </div>
   );
 };

@@ -2,41 +2,45 @@ import axios from './root.service.js';
 import { formatVecinoData } from '@helpers/formatData.js';
 
 export async function getVecinos() {
-    try {
-        const { data } = await axios.get('/vecinos/');
-        const formattedData = data.data.map(formatVecinoData);
-        return formattedData;
-    } catch (error) {
-        return error.response.data;
-    }
+  try {
+    const { data } = await axios.get('/vecinos/');
+    return data.data.map(formatVecinoData);
+  } catch (error) {
+    console.error("❌ Error al obtener vecinos:", error);
+    return error.response?.data || { message: 'Error al obtener vecinos' };
+  }
 }
 
-export async function updateVecino(data, rut) {
-    try {
-        const response = await axios.patch(`/vecinos/detail/?rut=${rut}`, data);
-        console.log(response);
-        return response.data.data;
-    } catch (error) {
-        console.log(error);
-        return error.response.data;
-    }
+export async function updateVecino(formData, rut) {
+  try {
+    const { data } = await axios.patch(`/vecinos/detail/?rut=${rut}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data.data;
+  } catch (error) {
+    console.error("❌ Error al actualizar vecino:", error);
+    throw error;
+  }
 }
 
 export async function deleteVecino(rut) {
-    try {
-        const response = await axios.delete(`/vecinos/detail/?rut=${rut}`);
-        return response.data;
-    } catch (error) {
-        return error.response.data;
-    }
+  try {
+    const { data } = await axios.delete(`/vecinos/detail/?rut=${rut}`);
+    return data;
+  } catch (error) {
+    console.error("❌ Error al eliminar vecino:", error);
+    throw error;
+  }
 }
 
-export async function createVecino(data) {
-    try {
-        const response = await axios.post('/vecinos/', data);
-        return response.data.data;
-    } catch (error) {
-        console.log(error);
-        return error.response.data;
-    }
+export async function createVecino(formData) {
+  try {
+    const { data } = await axios.post('/vecinos/', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data.data;
+  } catch (error) {
+    console.error("❌ Error al crear vecino:", error);
+    throw error;
+  }
 }
