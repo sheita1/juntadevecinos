@@ -9,6 +9,7 @@ import useDeleteReunion from "@hooks/reuniones/useDeleteReunion";
 import { createReunion } from "@services/reuniones.service.js";
 import { showErrorAlert, showSuccessAlert } from "@helpers/sweetAlert.js";
 import Swal from "sweetalert2";
+import { buildApiEndpoint, buildFileUrl } from "@helpers/urlHelper";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -68,7 +69,7 @@ const Reuniones = () => {
         const fileFormData = new FormData();
         fileFormData.append("acta", formData.acta);
 
-        fetch(`${API_URL}/api/reuniones/${newReunion.id}/acta`, {
+        fetch(buildApiEndpoint(`/reuniones/${newReunion.id}/acta`), {
           method: "POST",
           body: fileFormData,
           headers: {
@@ -95,7 +96,7 @@ const Reuniones = () => {
     const token = document.cookie.split("; ").find(row => row.startsWith("jwt="))?.split("=")[1];
 
     try {
-      const response = await fetch(`${API_URL}/api/reuniones/${reunionId}/acta`, {
+      const response = await fetch(buildApiEndpoint(`/reuniones/${reunionId}/acta`), {
         method: "POST",
         body: fileFormData,
         headers: {
@@ -128,7 +129,7 @@ const Reuniones = () => {
     const token = document.cookie.split("; ").find(row => row.startsWith("jwt="))?.split("=")[1];
 
     try {
-      const response = await fetch(`${API_URL}/api/reuniones/${reunionId}/acta`, {
+      const response = await fetch(buildApiEndpoint(`/reuniones/${reunionId}/acta`), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -158,7 +159,7 @@ const Reuniones = () => {
       formatter: (cell) => {
         const actaUrl = cell.getValue();
         return actaUrl
-          ? `<a href="${API_URL}/${actaUrl}" target="_blank">Ver Acta</a>`
+          ? `<a href="${buildFileUrl(actaUrl)}" target="_blank">Ver Acta</a>`
           : "No disponible";
       },
     },
