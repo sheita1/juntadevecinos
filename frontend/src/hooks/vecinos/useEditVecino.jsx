@@ -35,11 +35,6 @@ const useEditVecino = (setVecinos) => {
           formData.append('comprobante', dataVecino[0].comprobanteDomicilio);
         }
 
-        console.log("📤 FormData para enviar:");
-        for (const [key, value] of formData.entries()) {
-          console.log(`${key}:`, value);
-        }
-
         const updatedVecino = await updateVecino(formData, dataVecino[0].rut);
 
         showSuccessAlert('¡Actualizado!', 'El vecino ha sido actualizado correctamente.');
@@ -54,7 +49,6 @@ const useEditVecino = (setVecinos) => {
 
         setDataVecino([]);
       } catch (error) {
-        console.error('Error al actualizar el vecino:', error);
         showErrorAlert('Cancelado', 'Ocurrió un error al actualizar el vecino.');
       }
     }

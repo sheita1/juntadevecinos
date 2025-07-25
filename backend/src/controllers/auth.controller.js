@@ -12,7 +12,7 @@ import {
 
 export async function login(req, res) {
   try {
-    // 🔍 Logs de diagnóstico tempranos
+   
     console.log("🔥 headers → Content-Type:", req.headers["content-type"]);
     console.log("🧾 req.body completo:", req.body);
 

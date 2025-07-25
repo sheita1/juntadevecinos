@@ -4,17 +4,15 @@ import { showSuccessAlert, showErrorAlert } from "@helpers/sweetAlert.js";
 export default function useEditReunion(setReuniones) {
     const handleUpdate = async (id, updatedData) => {
         if (!id) {
-            console.error("❌ No se recibió un ID válido para actualizar la reunión.");
+            
             return;
         }
-
-        console.log(`🔄 Intentando actualizar reunión con ID: ${id}`, updatedData);  // ✅ Verificar ID y datos en consola
 
         try {
             const updatedReunion = await updateReunion(id, updatedData);
             
             if (updatedReunion) {
-                console.log("✅ Reunión actualizada correctamente:", updatedReunion);  // ✅ Verificar respuesta del backend
+                
                 setReuniones(prevReuniones =>
                     prevReuniones.map(reunion =>
                         reunion.id === updatedReunion.id ? updatedReunion : reunion
@@ -22,7 +20,7 @@ export default function useEditReunion(setReuniones) {
                 );
                 showSuccessAlert("Actualizado", "La reunión ha sido actualizada correctamente.");
             } else {
-                console.error("❌ No se pudo actualizar la reunión. Verifica que aún existe.");
+               
                 showErrorAlert("Error", "No se pudo actualizar la reunión.");
             }
         } catch (error) {

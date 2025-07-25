@@ -10,7 +10,6 @@ export async function getUsers() {
         return error.response.data;
     }
 }
-
 export async function updateUser(data, rut) {
     try {
         const response = await axios.patch(`/user/detail/?rut=${rut}`, data);

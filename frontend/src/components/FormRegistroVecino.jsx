@@ -1,4 +1,4 @@
-import '@styles/popup.css';
+import '../styles/popup.css';
 import CloseIcon from '@assets/XIcon.svg';
 import Form from '@components/Form';
 import { useState, useRef } from 'react';
@@ -16,7 +16,6 @@ export default function FormRegistroVecino({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef(null);
   const formRef = useRef(null);
-
   const { vecinos } = useVecinos();
 
   const validarDuplicado = (campo, valor) => {
@@ -32,7 +31,6 @@ export default function FormRegistroVecino({
     if (!valorIngresado) return;
 
     const duplicado = validarDuplicado(campo, valorIngresado);
-
     if (duplicado) {
       showErrorAlert(`${label} duplicado`, `Ya existe un vecino con ese ${label.toLowerCase()}.`);
     }
@@ -48,38 +46,27 @@ export default function FormRegistroVecino({
         if (value) formDataToSend.append(key, value);
       });
 
-      if (!modoEdicion) {
-        const file = fileInputRef.current?.files[0];
-        if (file instanceof File) {
-          formDataToSend.append('comprobante', file);
-          console.log('📂 Archivo PDF adjuntado:', file.name);
-        } else {
-          console.warn('⚠️ No se seleccionó un archivo PDF.');
-        }
+      const file = fileInputRef.current?.files?.[0];
+      if (!modoEdicion && file instanceof File) {
+        formDataToSend.append("comprobante", file);
+        console.log("📂 Archivo PDF adjuntado:", file.name);
       }
-
-      console.log('📤 Datos enviados al backend:', [...formDataToSend.entries()]);
 
       if (modoEdicion && dataInicial?.rut) {
         const vecinoActualizado = await updateVecino(formDataToSend, dataInicial.rut);
-
-        showSuccessAlert('¡Actualizado!', 'El vecino ha sido modificado exitosamente.');
+        showSuccessAlert("¡Actualizado!", "El vecino ha sido modificado exitosamente.");
         setVecinos((prev) =>
-          prev.map((vec) =>
-            vec.id === vecinoActualizado.id ? vecinoActualizado : vec
-          )
+          prev.map((vec) => (vec.id === vecinoActualizado.id ? vecinoActualizado : vec))
         );
       } else {
         const nuevoVecino = await createVecino(formDataToSend);
-
-        showSuccessAlert('¡Registro exitoso!', 'El vecino ha sido agregado correctamente.');
+        showSuccessAlert("¡Registro exitoso!", "El vecino ha sido agregado correctamente.");
         setVecinos((prev) => [...prev, nuevoVecino]);
       }
 
       setShow(false);
     } catch (error) {
-      console.error('❌ Error al enviar vecino:', error);
-
+      console.error("❌ Error al enviar vecino:", error);
       const status = error?.response?.status;
       const mensaje = error?.response?.data || "Ocurrió un problema inesperado.";
 
@@ -105,7 +92,7 @@ export default function FormRegistroVecino({
       fieldType: 'input',
       type: 'text',
       required: true,
-      minLength: 15,
+      minLength: 10,
       maxLength: 50,
       pattern: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
       patternMessage: 'Debe contener solo letras y espacios',
@@ -120,6 +107,8 @@ export default function FormRegistroVecino({
       required: true,
       minLength: 15,
       maxLength: 30,
+      pattern: /^[a-zA-Z0-9._%+-]+@gmail\.cl$/,
+      patternMessage: 'El correo debe terminar en @gmail.cl',
       onBlur: handleCampoBlur('correo', 'Correo')
     },
     {
@@ -148,6 +137,28 @@ export default function FormRegistroVecino({
       patternMessage: 'Debe contener exactamente 9 dígitos numéricos',
       onBlur: handleCampoBlur('telefono', 'Teléfono')
     },
+    {
+      label: 'Contraseña',
+      name: 'password',
+      placeholder: '********',
+      fieldType: 'input',
+      type: 'password',
+      required: true,
+      minLength: 6,
+      maxLength: 30,
+      pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/,
+      patternMessage: 'Debe contener letras y números (mínimo 6 caracteres)'
+    },
+    {
+      label: 'Rol',
+      name: 'rol',
+      fieldType: 'select',
+      options: [
+        { value: 'usuario', label: 'Usuario' },
+        { value: 'administrador', label: 'Administrador' }
+      ],
+      required: true
+    }
   ];
 
   return (
@@ -175,24 +186,46 @@ export default function FormRegistroVecino({
                   : 'Registrar Vecino'
               }
               backgroundColor="#fff"
-            />
+            >
+              {}
+              {!modoEdicion && (
+  <div className="form-group" style={{ marginTop: '8px' }}>
+    <label
+      htmlFor="comprobante"
+      style={{
+        fontWeight: '600',
+        fontSize: '13px',
+        marginBottom: '6px',
+        display: 'block',
+        color: '#003366'
+      }}
+    >
+      Adjuntar Comprobante
+    </label>
+    <input
+      type="file"
+      id="comprobante"
+      name="comprobante"
+      accept="application/pdf"
+      ref={fileInputRef}
+      required
+      className="input-file"
+      style={{
+        padding: '7px 10px',
+        fontSize: '14px',
+        borderRadius: '4px',
+        border: '1px solid #003366',
+        width: '100%',
+        backgroundColor: '#eef7ff',
+        color: '#003366',
+        boxSizing: 'border-box',
+        cursor: 'pointer'
+      }}
+    />
+  </div>
+)}
 
-            {!modoEdicion && (
-              <div className="file-upload">
-                <label htmlFor="comprobante" className="btn-archivo">
-                  Adjuntar Comprobante
-                </label>
-                <input
-                  type="file"
-                  id="comprobante"
-                  name="comprobante"
-                  accept="application/pdf"
-                  ref={fileInputRef}
-                  required
-                  style={{ display: 'none' }}
-                />
-              </div>
-            )}
+            </Form>
           </div>
         </div>
       )}

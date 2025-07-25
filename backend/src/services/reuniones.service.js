@@ -13,18 +13,13 @@ export async function validarReunionPorFecha(fecha) {
   }
 }
 
-/**
- * Crea nueva reunión si no repite fecha
- */
-export async function createReunionService({ nombre, fecha, acta }) {
+export async function createReunionService({ nombre, fecha, acta, lugar, descripcion }) {
   try {
     const repo = AppDataSource.getRepository(Reunion);
-
     console.log("🔍 [Crear] Verificando si ya existe una reunión el:", fecha);
-    const existe = await validarReunionPorFecha(fecha);
 
+    const existe = await validarReunionPorFecha(fecha);
     if (existe) {
-      console.warn("⚠️ [Crear] Ya existe una reunión en ese horario:", fecha);
       return [null, "Ya hay una reunión registrada en esa fecha y hora"];
     }
 
@@ -32,13 +27,14 @@ export async function createReunionService({ nombre, fecha, acta }) {
       nombre,
       fecha,
       acta: acta || null,
+      lugar: lugar || null,
+      descripcion: descripcion || null,
     });
 
     await repo.save(nuevaReunion);
-    console.log("✅ [Crear] Reunión guardada:", nuevaReunion);
     return [nuevaReunion, null];
   } catch (error) {
-    console.error("❌ [Crear] Error al guardar reunión:", error);
+    console.error("❌ [Crear] Error interno:", error);
     return [null, "Error interno del servidor"];
   }
 }
@@ -118,6 +114,8 @@ export async function updateReunionService(id, updatedData) {
 
     reunion.nombre = updatedData.nombre || reunion.nombre;
     reunion.fecha = updatedData.fecha || reunion.fecha;
+    reunion.lugar = updatedData.lugar || reunion.lugar;
+    reunion.descripcion = updatedData.descripcion || reunion.descripcion;
 
     await repo.save(reunion);
     return [reunion, null];

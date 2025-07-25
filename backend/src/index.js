@@ -44,10 +44,10 @@ async function setupServer() {
     app.use(json({ limit: "1mb" }));
     app.use(urlencoded({ extended: true, limit: "1mb" }));
 
-    // 🗂️ Archivos estáticos subidos
     app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-    // 🧩 Servir React desde frontend/dist
+    app.use("/api", indexRoutes);
+
     const frontendPath = path.join(process.cwd(), "frontend/dist");
     app.use(express.static(frontendPath));
 
@@ -55,19 +55,7 @@ async function setupServer() {
       res.sendFile(path.join(frontendPath, "index.html"));
     });
 
-    // 🔧 Endpoint de prueba
-    app.get("/api/test", (req, res) => {
-      res.json({ mensaje: "✅ API funcionando correctamente" });
-    });
-
-    // 📦 Rutas del backend
-    console.log("🔄 Cargando rutas desde indexRoutes...");
-    app.use("/api", indexRoutes);
-
-    app.listen(PORT, () => {
-      console.log(`✅ Servidor corriendo en ${HOST}:${PORT}/api`);
-    });
-
+    app.listen(PORT);
   } catch (error) {
     console.log("❌ Error en setupServer():", error);
   }
@@ -76,13 +64,11 @@ async function setupServer() {
 async function setupAPI() {
   try {
     await connectDB();
+    console.log("✅ Conexión exitosa a la base de datos!");
     await setupServer();
     await createUsers();
   } catch (error) {
     console.log("❌ Error en setupAPI():", error);
   }
 }
-
-setupAPI()
-  .then(() => console.log("🚀 API Iniciada exitosamente"))
-  .catch((error) => console.log("❌ Error en setupAPI():", error));
+setupAPI();

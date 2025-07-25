@@ -8,6 +8,7 @@ import "../styles/vecinos.css";
 import useEditVecino from '@hooks/vecinos/useEditVecino';
 import useDeleteVecino from '@hooks/vecinos/useDeleteVecino';
 import { buildFileUrl } from '@helpers/urlHelper';
+import { useAuth } from '@context/AuthContext'; 
 
 const Vecinos = () => {
   const { vecinos, fetchVecinos, setVecinos } = useVecinos();
@@ -33,6 +34,8 @@ const Vecinos = () => {
     setDataVecino(selectedVecinos);
   }, [setDataVecino]);
 
+  const { user } = useAuth(); 
+
   const columns = [
     { title: "Nombre", field: "nombre", width: 350, responsive: 0 },
     { title: "Correo electrónico", field: "correo", width: 300, responsive: 3 },
@@ -44,7 +47,7 @@ const Vecinos = () => {
       width: 220,
       responsive: 2,
       formatter: (cell) => {
-        const url = cell.getValue();
+        const url = buildFileUrl(cell.getValue());
 
         if (!url) return "No disponible";
 
@@ -70,30 +73,25 @@ const Vecinos = () => {
               placeholder={'Filtrar por rut'}
             />
 
-            <button
-              className='edit-vecino-button vecino-button'
-              onClick={handleClickUpdate}
-              disabled={dataVecino.length === 0}
-            >
+            {user?.rol !== 'usuario' && (
+                        <>
+            <button className='add-vecino-button vecino-button' onClick={() => setShowForm(true)}>
+              Registrar Vecino
+            </button>
+
+            <button className='edit-vecino-button vecino-button' onClick={handleClickUpdate} disabled={dataVecino.length === 0}>
               Editar
             </button>
 
-            <button
-              className='delete-vecino-button vecino-button'
-              onClick={() => handleDelete(dataVecino)}
-              disabled={dataVecino.length === 0}
-            >
+            <button className='delete-vecino-button vecino-button' onClick={() => handleDelete(dataVecino)} disabled={dataVecino.length === 0}>
               Eliminar
             </button>
+          </>
 
-            <button
-              className='add-vecino-button vecino-button'
-              onClick={() => setShowForm(true)}
-            >
-              Registrar Vecino
-            </button>
+            )}
           </div>
         </div>
+
         <Table
           data={vecinos}
           columns={columns}
@@ -103,12 +101,14 @@ const Vecinos = () => {
           onSelectionChange={handleSelectionChange}
         />
       </div>
+
       <Popup
         show={isPopupOpen}
         setShow={setIsPopupOpen}
         data={dataVecino}
         action={handleUpdate}
       />
+      
       <FormRegistroVecino
         show={showForm}
         setShow={setShowForm}

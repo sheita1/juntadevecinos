@@ -1,124 +1,90 @@
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { logout } from "@services/auth.service.js";
 import "@styles/navbar.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@context/AuthContext";
 
 const Navbar = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const user = JSON.parse(sessionStorage.getItem("usuario")) || "";
-    const userRole = user?.rol;
-    const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { user, isAuthenticated, setUser } = useAuth();
+  const userRole = user?.rol?.toLowerCase();
+  const [menuOpen, setMenuOpen] = useState(false);
 
-    const logoutSubmit = () => {
-        try {
-            logout();
-            navigate("/auth"); 
-        } catch (error) {
-            console.error("Error al cerrar sesión:", error);
-        }
-    };
+  const logoutSubmit = () => {
+    logout();
+    sessionStorage.removeItem("usuario");
+    setUser(null);
+    navigate("/auth");
+  };
 
-    const toggleMenu = () => {
-        if (!menuOpen) {
-            removeActiveClass();
-        } else {
-            addActiveClass();
-        }
-        setMenuOpen(!menuOpen);
-    };
+  const toggleMenu = () => setMenuOpen(!menuOpen);
 
-    const removeActiveClass = () => {
-        const activeLinks = document.querySelectorAll(".nav-menu ul li a.active");
-        activeLinks.forEach(link => link.classList.remove("active"));
-    };
+  useEffect(() => {
+    const closeOnNav = () => setMenuOpen(false);
+    window.addEventListener("popstate", closeOnNav);
+    return () => window.removeEventListener("popstate", closeOnNav);
+  }, []);
 
-    const addActiveClass = () => {
-        const links = document.querySelectorAll(".nav-menu ul li a");
-        links.forEach(link => {
-            if (link.getAttribute("href") === location.pathname) {
-                link.classList.add("active");
-            }
-        });
-    };
+  if (!isAuthenticated) return null;
 
-    return (
-        <nav className="navbar">
-            <div className={`nav-menu ${menuOpen ? "activado" : ""}`}>
-                <ul>
-                    <li>
-                        <NavLink 
-                            to="/home" 
-                            onClick={() => { 
-                                setMenuOpen(false); 
-                                addActiveClass();
-                            }} 
-                            activeClassName="active"
-                        >
-                            Inicio
-                        </NavLink>
-                    </li>
-                    {userRole === "administrador" && (
-                    <>
-                        <li>
-                            <NavLink 
-                                to="/users" 
-                                onClick={() => { 
-                                    setMenuOpen(false); 
-                                    addActiveClass();
-                                }} 
-                                activeClassName="active"
-                            >
-                                Usuarios
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink 
-                                to="/vecinos"  
-                                onClick={() => { 
-                                    setMenuOpen(false); 
-                                    addActiveClass();
-                                }} 
-                                activeClassName="active"
-                            >
-                                Vecinos
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink 
-                                to="/reuniones"  // ✅ Nueva sección de Reuniones
-                                onClick={() => { 
-                                    setMenuOpen(false); 
-                                    addActiveClass();
-                                }} 
-                                activeClassName="active"
-                            >
-                                Reuniones
-                            </NavLink>
-                        </li>
-                    </>
-                    )}
-                    <li>
-                        <NavLink 
-                            to="/auth" 
-                            onClick={() => { 
-                                logoutSubmit(); 
-                                setMenuOpen(false); 
-                            }} 
-                            activeClassName="active"
-                        >
-                            Cerrar sesión
-                        </NavLink>
-                    </li>
-                </ul>
-            </div>
-            <div className="hamburger" onClick={toggleMenu}>
-                <span className="bar"></span>
-                <span className="bar"></span>
-                <span className="bar"></span>
-            </div>
-        </nav>
-    );
+  return (
+    <nav className="navbar">
+      <div className={`nav-menu ${menuOpen ? "activado" : ""}`}>
+        <ul>
+          <li>
+            <NavLink
+              to="/home"
+              className={({ isActive }) => (isActive ? "active" : "")}
+              onClick={() => setMenuOpen(false)}
+            >
+              Inicio
+            </NavLink>
+          </li>
+
+          {userRole === "administrador" && (
+            <>
+              <li>
+                <NavLink to="/users">Usuarios</NavLink>
+              </li>
+              <li>
+                <NavLink to="/vecinos">Vecinos</NavLink>
+              </li>
+              <li>
+                <NavLink to="/reuniones">Reuniones</NavLink>
+              </li>
+            </>
+          )}
+
+          {userRole === "usuario" && (
+            <>
+              <li>
+                <NavLink to="/vecinos">Mis vecinos</NavLink>
+              </li>
+              <li>
+                <NavLink to="/reuniones">Mis reuniones</NavLink>
+              </li>
+              <li>
+                <NavLink to="/usuario/datos">Datos personales</NavLink>
+              </li>
+              <li>
+                <NavLink to="/usuario/reclamos">Reclamos</NavLink>
+              </li>
+            </>
+          )}
+
+          <li>
+            <button onClick={logoutSubmit}>Cerrar sesión</button>
+          </li>
+        </ul>
+      </div>
+
+      <div className="hamburger" onClick={toggleMenu}>
+        <span className="bar"></span>
+        <span className="bar"></span>
+        <span className="bar"></span>
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;

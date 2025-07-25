@@ -2,16 +2,20 @@ import { useState, useEffect } from "react";
 import { getReuniones } from "../../services/reuniones.service.js";
 
 export default function useReuniones() {
-    const [reuniones, setReuniones] = useState([]);
+  const [reuniones, setReuniones] = useState([]);
 
-    useEffect(() => {
-        cargarReuniones();
-    }, []);
+  const cargarReuniones = async () => {
+    try {
+      const data = await getReuniones(); 
+      setReuniones(data || []);
+    } catch (error) { 
+      setReuniones([]);
+    }
+  };
 
-    const cargarReuniones = async () => {
-        const data = await getReuniones();
-        setReuniones(data);
-    };
+  useEffect(() => {
+    cargarReuniones();
+  }, []);
 
-    return { reuniones, setReuniones, cargarReuniones };
+  return { reuniones, setReuniones, cargarReuniones };
 }

@@ -1,102 +1,127 @@
-.bg{
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(18, 19, 18, 0.338);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.bg {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(18, 19, 18, 0.338);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
 }
-.popup{
-    top: 30px;
-    height: 700px;
-    width: 600px;
-    background: white;
-    position: relative;
-    border-radius: 12px;
-}
-.close{
-    position: absolute;
-    margin-top: 20px;
-    margin-right: 10px;
-    right: 10px;
-    cursor: pointer;
-    background-color: white;
-    border: white;
 
+.popup {
+  width: 460px;
+  max-height: 80vh;
+  background: white;
+  position: relative;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
 }
-.title{
-    font-size: 17px;
-    font-weight: 700;
+
+.close {
+  position: absolute;
+  top: 16px;
+  right: 12px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
 }
+
 .popup .form {
-    padding: 35px;
-    h1 {
-        margin-bottom: 30px;
-    }
-    button {
-        margin-top: 0;
-    }
-    .container_inputs {
-        margin-bottom: 10px;
-    }
-    .tooltip-icon {
-        position: relative;
-        top: 4px;
-        margin-left: 3px;
-        cursor: pointer;
-        display: inline-block;
-    }
-    .tooltip-icon .tooltip-text {
-    visibility: hidden;
-    width: 150px;
-    background-color: rgba(0, 0, 0, 0.75);
-    color: #fff;
-    text-align: center;
-    border-radius: 4px;
-    padding: 5px;
-    position: absolute;
-    font-size: 12px;
-    z-index: 1;
-    top: -3px;
-    left: 105%;
-    opacity: 0;
-    transition: opacity 0.3s;
-    }
-    .tooltip-icon .tooltip-text::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent rgba(0, 0, 0, 0.75) transparent transparent;
-    }
-    .tooltip-icon:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-    }
-    .toggle-password-icon {
-        top: 47.5%;
-    }
+  padding: 20px 24px;
 }
-.btn-archivo {
-  display: inline-block;
-  padding: 10px 18px;
-  background-color: #06254f;
+
+.popup .form h1 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  color: #003366;
+}
+
+.popup .form .container_inputs {
+  margin-bottom: 10px;
+}
+
+.popup .form label {
+  font-size: 13px;
+  margin-bottom: 4px;
+  display: block;
+  color: #003366;
+}
+
+.popup .form input,
+.popup .form select,
+.popup .form textarea {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 7px 10px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.popup .form button {
+  margin-top: 14px;
+  padding: 10px;
+  font-size: 15px;
+  background-color: #003366;
   color: white;
   border: none;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 14px;
+  border-radius: 4px;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 12px;
-  transition: background-color 0.3s ease;
 }
 
-.btn-archivo:hover {
+.popup .form button:hover {
   background-color: #195fcc;
 }
+
+.popup .form .input-file {
+  padding: 7px 10px;
+  font-size: 13px;
+  background-color: #eef7ff;
+  border: 1px solid #003366;
+  border-radius: 4px;
+  color: #003366;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .popup {
+    width: 92%;
+  }
+
+  .form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  color: #003366;
+}
+
+.input-file {
+  border: 1px solid #003366;
+  border-radius: 4px;
+  padding: 7px 10px;
+  font-size: 14px;
+  background-color: #eef7ff;
+  color: #003366;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.input-file:hover {
+  background-color: rgba(0, 110, 223, 0.1);
+}
+
+
+}
+

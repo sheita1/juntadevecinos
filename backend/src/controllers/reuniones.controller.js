@@ -17,7 +17,7 @@ import {
 
 export async function createReunion(req, res) {
   try {
-    const { nombre, fecha } = req.body;
+    const { nombre, fecha, lugar, descripcion } = req.body;
 
     if (!nombre || !fecha) {
       console.warn("⚠️ Datos incompletos: Nombre y fecha son obligatorios.");
@@ -36,7 +36,12 @@ export async function createReunion(req, res) {
       );
     }
 
-    const [nuevaReunion, errorCreateReunion] = await createReunionService({ nombre, fecha });
+    const [nuevaReunion, errorCreateReunion] = await createReunionService({
+      nombre,
+      fecha,
+      lugar,
+      descripcion,
+    });
 
     if (errorCreateReunion) {
       console.error("❌ Error al crear reunión:", errorCreateReunion);
@@ -136,14 +141,19 @@ export async function deleteReunion(req, res) {
 export async function updateReunion(req, res) {
   try {
     const { id } = req.params;
-    const { nombre, fecha } = req.body;
+    const { nombre, fecha, lugar, descripcion } = req.body;
 
     if (!nombre || !fecha) {
       console.warn("⚠️ Datos incompletos: Nombre y fecha son obligatorios.");
       return handleErrorClient(res, 400, "Nombre y fecha son obligatorios.");
     }
 
-    const [reunionActualizada, errorUpdateReunion] = await updateReunionService(id, { nombre, fecha });
+    const [reunionActualizada, errorUpdateReunion] = await updateReunionService(id, {
+      nombre,
+      fecha,
+      lugar,
+      descripcion,
+    });
 
     if (errorUpdateReunion) {
       console.error("❌ Error al actualizar reunión:", errorUpdateReunion);

@@ -1,0 +1,19 @@
+.tabla-vecinos .tabulator {
+  font-size: 13px !important;
+  font-family: "Segoe UI", Roboto, sans-serif !important;
+}
+
+.tabla-vecinos .tabulator-header .tabulator-col {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+.tabla-vecinos .tabulator-cell {
+  font-size: 13px !important;
+}
+.tabla-vecinos .tabulator-header .tabulator-col,
+.tabla-vecinos .tabulator-cell {
+  font-size: 13px;
+  font-weight: 500;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}

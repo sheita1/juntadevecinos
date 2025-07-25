@@ -5,8 +5,12 @@ import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 import { ACCESS_TOKEN_SECRET } from "../config/configEnv.js";
 import { AppDataSource } from "../config/configDb.js";
 
+
 const options = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  jwtFromRequest: ExtractJwt.fromExtractors([
+    ExtractJwt.fromAuthHeaderAsBearerToken(),
+    (req) => req.cookies?.jwt,
+  ]),
   secretOrKey: ACCESS_TOKEN_SECRET,
 };
 
@@ -21,16 +25,16 @@ passport.use(
       });
 
       if (user) {
-        return done(null, user);
+        return done(null, user); 
       } else {
         return done(null, false);
       }
     } catch (error) {
       return done(error, false);
     }
-  }),
+  })
 );
 
 export function passportJwtSetup() {
-  passport.initialize();
+  passport.initialize(); 
 }

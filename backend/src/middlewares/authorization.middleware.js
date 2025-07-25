@@ -1,40 +1,40 @@
 import User from "../entity/user.entity.js";
 import { AppDataSource } from "../config/configDb.js";
 import {
-handleErrorClient,
-handleErrorServer,
+  handleErrorClient,
+  handleErrorServer,
 } from "../handlers/responseHandlers.js";
 
 export async function isAdmin(req, res, next) {
-try {
+  try {
     const userRepository = AppDataSource.getRepository(User);
 
     const userFound = await userRepository.findOneBy({ email: req.user.email });
 
     if (!userFound) {
-    return handleErrorClient(
+      console.warn("❌ Usuario no encontrado:", req.user?.email);
+      return handleErrorClient(
         res,
         404,
-        "Usuario no encontrado en la base de datos",
-    );
+        "Usuario no encontrado en la base de datos"
+      );
     }
 
-    const rolUser = userFound.rol;
+    const rolUser = String(userFound.rol || "").trim().toLowerCase();
+    console.log("🔒 Rol decodificado:", rolUser);
 
     if (rolUser !== "administrador") {
-        return handleErrorClient(
-            res,
-            403,
-            "Error al acceder al recurso",
-            "Se requiere un rol de administrador para realizar esta acción."
-        );
+      return handleErrorClient(
+        res,
+        403,
+        "Acceso denegado",
+        "Solo usuarios con rol 'administrador' pueden acceder a este recurso."
+      );
     }
+
     next();
-} catch (error) {
-    handleErrorServer(
-    res,
-    500,
-    error.message,
-    );
-}
+  } catch (error) {
+    console.error("💥 Error en isAdmin middleware:", error);
+    handleErrorServer(res, 500, error.message);
+  }
 }

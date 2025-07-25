@@ -9,19 +9,24 @@ import {
   uploadActa,
   deleteReunion,
   updateReunion,
-  eliminarActa,
+  eliminarActa
 } from "../controllers/reuniones.controller.js";
 
 const router = Router();
 
-router.get("/", authenticateJwt, isAdmin, getReuniones);
+
+router.get("/", authenticateJwt, getReuniones);
+
+
 router.post("/", authenticateJwt, isAdmin, createReunion);
 
 
-router.post("/:id/acta", upload.single("acta"), uploadActa);
-router.delete("/:id/acta", eliminarActa);
+router.post("/:id/acta", authenticateJwt, isAdmin, upload.single("acta"), uploadActa);
+
+router.delete("/:id/acta", authenticateJwt, isAdmin, eliminarActa);
 
 router.delete("/:id", authenticateJwt, isAdmin, deleteReunion);
+
 router.patch("/:id", authenticateJwt, isAdmin, updateReunion);
 
 export default router;

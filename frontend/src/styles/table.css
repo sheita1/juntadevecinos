@@ -1,23 +1,20 @@
-
 .table-container .tabulator {
   border: none;
   border-radius: 10px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
   background-color: #ffffff;
+ 
 }
 
-
 .table-container .tabulator .tabulator-col {
-  background-color: #003366;
+  background-color: #1B4332;
   color: #ffffff;
   font-weight: bold;
   padding: 12px;
-  border-right: 1px solid #005599;
+  border-right: 1px solid #1B4332;
   text-align: left;
 }
-
 
 .tabulator .tabulator-cell {
   padding: 10px;
@@ -25,14 +22,13 @@
   border-right: 1px solid #eee;
   border-bottom: 1px solid #f1f1f1;
   background-color: #fefefe;
+  /* ⛔ font-size eliminado */
 }
-
 
 .tabulator .tabulator-row:hover {
   background-color: #e3f2ff;
   transition: background-color 0.2s ease;
 }
-
 
 .tabulator .tabulator-footer {
   border-top: 1px solid #ddd;
@@ -41,11 +37,10 @@
   background-color: #f9f9f9;
 }
 
-
 .tabulator .tabulator-footer .tabulator-page {
   background-color: #ffffff;
-  color: #003366;
-  border: 1px solid #003366;
+  color: #1B4332;
+  border: 1px solid #1B4332;
   padding: 6px 12px;
   margin: 0 3px;
   border-radius: 6px;
@@ -54,19 +49,16 @@
   transition: all 0.2s ease;
 }
 
-
 .tabulator .tabulator-footer .tabulator-page.active {
-  background-color: #003366;
+  background-color: #1B4332;
   color: #ffffff;
-  border-color: #003366;
+  border-color: #1B4332;
 }
-
 
 .tabulator .tabulator-row {
   display: flex;
   flex-wrap: wrap;
 }
-
 
 .table-container .tabulator-cell .tabulator-select-row input[type="checkbox"] {
   transform: scale(0.85);
